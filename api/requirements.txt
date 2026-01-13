@@ -146,3 +146,5 @@ websockets==16.0
     # via uvicorn
 prometheus-client==0.18.0
 prometheus-fastapi-instrumentator
+pytest==7.4.2
+    # via api (pyproject.toml)
