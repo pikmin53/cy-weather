@@ -1,15 +1,19 @@
-name: Build & Deploy Vue site
+name: Deploy Frontend to GitHub Pages
 
 on:
   push:
     branches:
-      - main   # branche de dev 
+      - main
+    paths:
+      - "web/**"
 
 permissions:
-  contents: write   # obligatoire pour push sur une autre branche
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Install dependencies
         working-directory: web
@@ -35,10 +38,5 @@ jobs:
         with:
           path: web/dist
 
-      - name: Deploy to deploy branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: website  # branche cible
-          force_orphan: true       # branche propre, historique séparé
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
