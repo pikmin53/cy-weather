@@ -89,6 +89,7 @@ Accéder à l'application : http://localhost
 
 ## 📁 Structure du projet
 
+
 ```
 web/
 ├── src/
