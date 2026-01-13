@@ -37,7 +37,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test requirement
       run: |
-        pipfreeze
+        python -m pip freeze
     - name: Test with pytest
       run: |
         pytest api/test.py
