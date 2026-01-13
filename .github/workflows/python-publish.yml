@@ -33,6 +33,7 @@ jobs:
       - name: Build release distributions
         run: |
           # NOTE: put your own distribution build steps here.
+          cd api
           python -m pip install build
           python -m build
 
