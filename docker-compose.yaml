@@ -18,6 +18,7 @@ services:
       start_period: 40s
     networks:
       - cy-weather-network
+      - monitoring
 
   # Service Frontend Web (Vue.js + Nginx)
   web:
@@ -39,7 +40,41 @@ services:
       start_period: 10s
     networks:
       - cy-weather-network
+  
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    networks:
+      - monitoring
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+      - 'grafana_storage:/var/lib/grafana'
+    networks:
+      - monitoring
+
+volumes:
+  grafana_storage: {}
+  prom_data: {}
 
 networks:
   cy-weather-network:
+    driver: bridge
+  monitoring:
     driver: bridge

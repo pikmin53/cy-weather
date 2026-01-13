@@ -1,11 +1,18 @@
 import httpx
 from typing import Optional
 from datetime import datetime
+from prometheus_client import Gauge
 from src.models.Weather import (
     WeatherResponse,
     ForecastResponse,
     CurrentWeatherData,
     DailyForecastData,
+)
+
+#Définition de la métrique de la température
+cy_weather_api_weather_history = Gauge(
+    "cy_weather_api_weather_history",
+    "Historique des températures enregistrées par la CY Weather API",
 )
 
 
@@ -158,6 +165,10 @@ class WeatherService:
             description=self._get_weather_description(wmo_code),
             icon=self._wmo_to_icon(wmo_code),
         )
+
+        #Changement de la métrique 
+        cy_weather_api_weather_history.set(current["temperature_2m"])
+
 
         return WeatherResponse(
             city=city_name,

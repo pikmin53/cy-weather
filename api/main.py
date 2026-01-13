@@ -1,4 +1,6 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Request
+from fastapi.responses import Response
+import time
 from fastapi.middleware.cors import CORSMiddleware
 from src.resources.weather_resource import router as weather_router
 
@@ -49,3 +51,12 @@ async def health_check():
 
 app.include_router(router)
 app.include_router(weather_router, prefix="/api")
+
+
+
+@app.get("/metrics")
+async def metrics_endpoint():
+    """Endpoint compatible Prometheus: récupère toutes les métriques enregistrées."""
+    from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
