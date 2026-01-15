@@ -12,7 +12,7 @@ docker compose up garage -d
 docker exec -it garage /garage status
 ```
 
-Mémoriser l'ID du node retourné.
+Mémoriser l'ID du node retourné. actuellement : b4d76c96a3439da2
 
 3. Assigner un layout :
 ```shell
@@ -33,7 +33,8 @@ docker exec -it garage /garage bucket allow --read --write --owner mlflow-bucket
 ```
 
 Mémoriser la valeur de la key retournée (Key ID et Secret key).
-
+KEY ID : GK946043f9ae9c5e813a83ea7a
+Secret key ID : 43a41183c17e79d8b7b968a0785a0b3c5728249bd3236893bd9c1ba0495ec842
 6. Dans le fichier `mlflow/docker-compose.yaml`, modifier les variables d'environnement `AWS_ACCESS_KEY_ID` et `AWS_SECRET_ACCESS_KEY` pour le service `mlflow` avec les valeurs de la key mémorisées précédemment.
 
 ## Démarrer le service MLFlow avec Docker Compose :
