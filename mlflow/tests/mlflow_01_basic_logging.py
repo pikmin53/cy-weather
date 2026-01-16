@@ -8,12 +8,12 @@ Ce script démontre comment logger:
 - Des artefacts (graphiques, fichiers)
 """
 
-# import mlflow
-# import mlflow.sklearn
+import mlflow
+import mlflow.sklearn
 from sklearn.datasets import load_iris
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -23,13 +23,15 @@ import pandas as pd
 
 
 # Configuration MLflow
-# mlflow.set_tracking_uri("http://localhost:5000")
-# mlflow.set_experiment("01-Basic-Logging")
+mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_experiment("01-Basic-Logging")
 
 # Chargement des données
 print("📊 Chargement du dataset Iris...")
 # Charger le CSV
 df = pd.read_csv("data.csv")
+
+
 
 # Séparer X et y
 X = df.iloc[:, :-1]   # toutes les colonnes sauf la dernière
@@ -44,66 +46,66 @@ print(y.head())#ouvre le data.csv et prends la dernière colone pour la mettre d
 
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
-# # Entraînement avec logging MLflow
-# print("\n🚀 Entraînement du modèle avec MLflow...")
-# with mlflow.start_run(run_name="random_forest_iris"):
+print(f"\n✅ Données divisées: {len(X_train)} pour l'entraînement, {len(X_test)} pour le test.")
+# Entraînement avec logging MLflow
+print("\n🚀 Entraînement du modèle avec MLflow...")
+with mlflow.start_run(run_name="random_forest_iris"):
     
-#     # 1. Logger les paramètres
-#     params = {
-#         "n_estimators": 100,
-#         "max_depth": 5,
-#         "min_samples_split": 2,
-#         "random_state": 42
-#     }
-#     mlflow.log_params(params)
+    # 1. Logger les paramètres
+    params = {
+        "n_estimators": 100,
+        "max_depth": 5,
+        "min_samples_split": 2,
+        "random_state": 42
+    }
+    mlflow.log_params(params)
     
-#     # 2. Entraîner le modèle
-#     model = RandomForestClassifier(**params)
-#     model.fit(X_train, y_train)
-#     predictions = model.predict(X_test)
+    # 2. Entraîner le modèle
+    model = RandomForestRegressor(**params)
+    model.fit(X_train, y_train)
+    predictions = model.predict(X_test)
     
-#     # 3. Logger les métriques
-#     metrics = {
-#         "accuracy": accuracy_score(y_test, predictions),
-#         "f1_score_macro": f1_score(y_test, predictions, average='macro'),
-#         "precision_macro": precision_score(y_test, predictions, average='macro'),
-#         "recall_macro": recall_score(y_test, predictions, average='macro'),
-#         "train_size": len(X_train),
-#         "test_size": len(X_test)
-#     }
-#     mlflow.log_metrics(metrics)
+    # 3. Logger les métriques
+    metrics = {
+    "mse": mean_squared_error(y_test, predictions),
+    "mae": mean_absolute_error(y_test, predictions),
+    "r2": r2_score(y_test, predictions),
+}
+
+    mlflow.log_metrics(metrics)
     
-#     print(f"✅ Accuracy: {metrics['accuracy']:.4f}")
-#     print(f"✅ F1-Score: {metrics['f1_score_macro']:.4f}")
+    print(f"✅ MSE: {metrics['mse']:.4f}")
+    print(f"✅ MAE: {metrics['mae']:.4f}")
+    print(f"✅ R²: {metrics['r2']:.4f}")
     
-#     # 4. Logger le modèle
-#     mlflow.sklearn.log_model(
-#         model, 
-#         "model",
-#         registered_model_name="iris_classifier"
-#     )
+    # 4. Logger le modèle
+    mlflow.sklearn.log_model(
+        model, 
+        "model",
+        registered_model_name="iris_classifier"
+    )
     
-#     # 5. Logger un artefact (graphique)
-#     fig, ax = plt.subplots(figsize=(10, 6))
-#     feature_importance = model.feature_importances_
-#     features = data.feature_names
-#     ax.barh(features, feature_importance)
-#     ax.set_xlabel('Importance')
-#     ax.set_title('Feature Importance')
-#     plt.tight_layout()
+    # 5. Logger un artefact (graphique)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    feature_importance = model.feature_importances_
+    features = X.columns  # Utiliser les noms des colonnes de X
+    ax.barh(features, feature_importance)
+    ax.set_xlabel('Importance')
+    ax.set_title('Feature Importance')
+    plt.tight_layout()
     
-#     # Sauvegarder et logger le graphique
-#     plt.savefig("feature_importance.png")
-#     mlflow.log_artifact("feature_importance.png")
-#     plt.close()
+    # Sauvegarder et logger le graphique
+    plt.savefig("feature_importance.png")
+    mlflow.log_artifact("feature_importance.png")
+    plt.close()
     
-#     # 6. Logger des tags pour organiser les runs
-#     mlflow.set_tags({
-#         "model_type": "RandomForest",
-#         "dataset": "iris",
-#         "team": "data-science",
-#         "environment": "training"
-#     })
+    # 6. Logger des tags pour organiser les runs
+    mlflow.set_tags({
+        "model_type": "RandomForest",
+        "dataset": "iris",
+        "team": "data-science",
+        "environment": "training"
+    })
     
-#     print(f"\n🎉 Run terminé! Consultez MLflow UI pour voir les résultats.")
-#     print(f"Run ID: {mlflow.active_run().info.run_id}")
+    print(f"\n🎉 Run terminé! Consultez MLflow UI pour voir les résultats.")
+    print(f"Run ID: {mlflow.active_run().info.run_id}")
