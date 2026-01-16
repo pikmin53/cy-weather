@@ -81,7 +81,7 @@ with mlflow.start_run(run_name="random_forest_iris"):
     # 4. Logger le modèle
     mlflow.sklearn.log_model(
         model, 
-        "model",
+        name="model",
         registered_model_name="iris_classifier"
     )
     

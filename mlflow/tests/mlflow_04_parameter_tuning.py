@@ -98,7 +98,7 @@ with mlflow.start_run(run_name="hyperparameter_tuning_experiment") as parent_run
             mlflow.log_metrics(metrics)
             
             # Logger le modèle
-            mlflow.sklearn.log_model(model, "model")
+            mlflow.sklearn.log_model(model, name="model")
             
             # Garder trace du meilleur modèle
             if accuracy > best_accuracy:

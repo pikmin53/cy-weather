@@ -50,7 +50,7 @@ with mlflow.start_run(run_name="v1_random_forest"):
     # Enregistrer le modèle dans le Registry
     model_uri = mlflow.sklearn.log_model(
         model_v1,
-        "model",
+        name="model",
         registered_model_name=model_name
     ).model_uri
     
@@ -87,7 +87,7 @@ with mlflow.start_run(run_name="v2_gradient_boosting"):
     # Enregistrer le modèle dans le Registry
     mlflow.sklearn.log_model(
         model_v2,
-        "model",
+        name="model",
         registered_model_name=model_name
     )
     
